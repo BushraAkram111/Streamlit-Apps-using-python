@@ -52,7 +52,7 @@ def main():
 
     # Display introductory text
     st.markdown("""
-    ## This app helps you set a countdown timer for your tasks. 
+    This app helps you set a countdown timer for your tasks. 
     You can start, pause, stop, or restart the countdown. 
     When the countdown reaches zero, a notification will pop up.
     """, unsafe_allow_html=True)
