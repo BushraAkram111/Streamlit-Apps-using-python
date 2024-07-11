@@ -6,43 +6,45 @@ def countdown(t):
     start_time = time.time()
     remaining_time = t
     
+    countdown_placeholder = st.empty()  # Placeholder for the timer display
+    notification_placeholder = st.empty()  # Placeholder for the notification message
+    
     while remaining_time > 0:
         if st.session_state.stop:
             st.session_state.stop = False  # Reset the stop flag
-            st.session_state.pause = False  # Ensure pause is off
-            st.session_state.restart = False  # Ensure restart is off
-            st.session_state.timer_running = False  # Timer is stopped
-            st.session_state.countdown_display = 'Countdown Stopped'
+            countdown_placeholder.text('Countdown Stopped')
             break
         
         if st.session_state.restart:
             st.session_state.restart = False  # Reset the restart flag
             start_time = time.time()
             remaining_time = t
-            st.session_state.countdown_display = ''  # Clear the countdown display
+            countdown_placeholder.text('')  # Clear the placeholder text
+            notification_placeholder.text('')  # Clear the notification text
             continue
         
         if st.session_state.pause:
-            st.session_state.countdown_display = 'Countdown Paused'
+            countdown_placeholder.text('Countdown Paused')
             while st.session_state.pause:
                 time.sleep(0.1)  # Wait until pause is released
         else:
             elapsed_time = time.time() - start_time
             remaining_time = max(t - int(elapsed_time), 0)
             mins, secs = divmod(remaining_time, 60)
-            st.session_state.countdown_display = '{:02d}:{:02d}'.format(mins, secs)
+            timer = '{:02d}:{:02d}'.format(mins, secs)
+            countdown_placeholder.text(timer)
             time.sleep(1)
     
     if remaining_time <= 0:
-        st.session_state.countdown_display = 'Time is Over!'
+        countdown_placeholder.text('Time is Over!')
+        notification_placeholder.text('Time is Over!')
         st.balloons()  # Show a notification (balloons animation) when the countdown finishes
         st.success('Time is Over!')  # Show a success notification
-        st.session_state.timer_running = False  # Ensure timer is stopped
 
 # Streamlit app
 def main():
     st.title("Countdown Timer")
-    
+
     # Initialize session state variables
     if 'stop' not in st.session_state:
         st.session_state.stop = False
@@ -50,20 +52,15 @@ def main():
         st.session_state.pause = False
     if 'restart' not in st.session_state:
         st.session_state.restart = False
-    if 'timer_running' not in st.session_state:
-        st.session_state.timer_running = False
-    if 'countdown_display' not in st.session_state:
-        st.session_state.countdown_display = ''
 
     t = st.number_input("Enter the time in seconds:", min_value=0, step=1, value=10)
-
+    
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.button("Start Countdown"):
             st.session_state.stop = False
             st.session_state.pause = False
             st.session_state.restart = False
-            st.session_state.timer_running = True
             countdown(t)
     
     with col2:
@@ -77,9 +74,6 @@ def main():
     with col4:
         if st.button("Restart Countdown"):
             st.session_state.restart = True
-
-    # Display the countdown timer
-    st.markdown(f'<h1 style="text-align: center; color: #61dafb;">{st.session_state.countdown_display}</h1>', unsafe_allow_html=True)
 
     # Add a unique and modern style
     st.markdown("""
