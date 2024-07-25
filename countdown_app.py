@@ -70,8 +70,6 @@ def main():
         st.session_state.timer_running = False
     if 'countdown_display' not in st.session_state:
         st.session_state.countdown_display = ''
-    if 'remaining_time' not in st.session_state:
-        st.session_state.remaining_time = 0
 
     t = st.number_input("Enter the time in seconds:", min_value=0, step=1, value=10)
 
@@ -83,7 +81,6 @@ def main():
                 st.session_state.pause = False
                 st.session_state.restart = False
                 st.session_state.timer_running = True
-                st.session_state.remaining_time = t
                 countdown(t)
     
     with col2:
@@ -97,7 +94,6 @@ def main():
     with col4:
         if st.button("Restart Countdown"):
             st.session_state.restart = True
-            st.session_state.timer_running = False
 
     # Display the countdown timer
     st.markdown(f'<h1 style="text-align: center; color: #61dafb;">{st.session_state.countdown_display}</h1>', unsafe_allow_html=True)
