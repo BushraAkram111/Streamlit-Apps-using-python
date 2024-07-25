@@ -2,40 +2,49 @@ import streamlit as st
 import time
 
 # Define the countdown function
-def countdown():
-    while st.session_state.remaining_time > 0:
+def countdown(t):
+    start_time = time.time()
+    remaining_time = t
+    
+    countdown_placeholder = st.empty()  # Placeholder for the timer display
+    notification_placeholder = st.empty()  # Placeholder for the notification message
+    
+    while remaining_time > 0:
         if st.session_state.stop:
-            st.session_state.stop = False
-            st.session_state.timer_running = False
+            st.session_state.stop = False  # Reset the stop flag
+            st.session_state.restart = False  # Ensure restart is off
+            st.session_state.timer_running = False  # Timer is stopped
             st.session_state.countdown_display = 'Countdown Stopped'
             break
         
         if st.session_state.restart:
-            st.session_state.restart = False
-            st.session_state.remaining_time = st.session_state.initial_time
-            st.session_state.countdown_display = ''
-            st.warning("Please set the time again.")
+            st.session_state.restart = False  # Reset the restart flag
+            st.session_state.countdown_display = ''  # Clear the countdown display
+            notification_placeholder.text('')  # Clear the notification text
+            st.warning("Please set the time again.")  # Prompt user to set time
             break
         
-        elapsed_time = time.time() - st.session_state.start_time
-        st.session_state.remaining_time = max(st.session_state.initial_time - int(elapsed_time), 0)
-        mins, secs = divmod(st.session_state.remaining_time, 60)
+        # Calculate remaining time
+        elapsed_time = time.time() - start_time
+        remaining_time = max(t - int(elapsed_time), 0)
+        mins, secs = divmod(remaining_time, 60)
         timer = '{:02d}:{:02d}'.format(mins, secs)
         st.session_state.countdown_display = timer
-        st.session_state.countdown_placeholder.text(timer)
+        countdown_placeholder.text(timer)
         time.sleep(1)
     
-    if st.session_state.remaining_time <= 0:
-        st.session_state.countdown_placeholder.text('Time is Over!')
-        st.session_state.notification_placeholder.text('Time is Over!')
-        st.balloons()
-        st.success('Time is Over!')
-        st.session_state.timer_running = False
+    if remaining_time <= 0:
+        countdown_placeholder.text('Time is Over!')
+        notification_placeholder.text('Time is Over!')
+        st.balloons()  # Show a notification (balloons animation) when the countdown finishes
+        st.success('Time is Over!')  # Show a success notification
+        st.session_state.timer_running = False  # Ensure timer is stopped
 
 # Streamlit app
 def main():
     st.title("Countdown Timer")
 
+    # Display introductory text
     st.markdown("""
     This app helps you set a countdown timer for your tasks. 
     You can start, stop, or restart the countdown. 
@@ -62,10 +71,8 @@ def main():
     if 'notification_placeholder' not in st.session_state:
         st.session_state.notification_placeholder = st.empty()
 
-    # Time input
     t = st.number_input("Enter the time in seconds:", min_value=0, step=1, value=10)
 
-    # Buttons for timer control
     col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("Start Countdown"):
@@ -76,7 +83,7 @@ def main():
                 st.session_state.initial_time = t
                 st.session_state.remaining_time = t
                 st.session_state.start_time = time.time()
-                countdown()
+                countdown(t)
     
     with col2:
         if st.button("Stop Countdown"):
