@@ -13,9 +13,10 @@ def countdown():
         
         if st.session_state.restart:
             st.session_state.restart = False
-            st.session_state.remaining_time = 0
+            st.session_state.remaining_time = st.session_state.initial_time
             st.session_state.pause = False
-            st.session_state.countdown_display = 'Please set the time again.'
+            st.session_state.countdown_display = ''
+            st.warning("Please set the time again.")
             break
         
         if st.session_state.pause:
@@ -49,6 +50,7 @@ def main():
     When the countdown reaches zero, a notification will pop up.
     """, unsafe_allow_html=True)
 
+    # Initialize session state variables
     if 'stop' not in st.session_state:
         st.session_state.stop = False
     if 'pause' not in st.session_state:
@@ -70,8 +72,10 @@ def main():
     if 'notification_placeholder' not in st.session_state:
         st.session_state.notification_placeholder = st.empty()
 
+    # Time input
     t = st.number_input("Enter the time in seconds:", min_value=0, step=1, value=10)
 
+    # Buttons for timer control
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         if st.button("Start Countdown"):
@@ -97,8 +101,10 @@ def main():
         if st.button("Restart Countdown"):
             st.session_state.restart = True
 
+    # Display the countdown timer
     st.markdown(f'<h1 style="text-align: center; color: #61dafb;">{st.session_state.countdown_display}</h1>', unsafe_allow_html=True)
 
+    # Add a unique and modern style
     st.markdown("""
     <style>
     .css-18e3th9 {
