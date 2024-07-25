@@ -24,12 +24,14 @@ def countdown(t):
             remaining_time = t
             st.session_state.countdown_display = ''  # Clear the countdown display
             notification_placeholder.text('')  # Clear the notification text
+            st.session_state.pause = False  # Reset pause state when restarting
             continue
         
         if st.session_state.pause:
             st.session_state.countdown_display = 'Countdown Paused'
             while st.session_state.pause:
                 time.sleep(0.1)  # Wait until pause is released
+            start_time = time.time() - (t - remaining_time)  # Adjust start_time to keep the remaining time consistent
         else:
             elapsed_time = time.time() - start_time
             remaining_time = max(t - int(elapsed_time), 0)
