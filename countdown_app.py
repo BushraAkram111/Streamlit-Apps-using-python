@@ -6,7 +6,6 @@ def countdown():
     while st.session_state.remaining_time > 0:
         if st.session_state.stop:
             st.session_state.stop = False
-            st.session_state.pause = False
             st.session_state.timer_running = False
             st.session_state.countdown_display = 'Countdown Stopped'
             break
@@ -14,24 +13,17 @@ def countdown():
         if st.session_state.restart:
             st.session_state.restart = False
             st.session_state.remaining_time = st.session_state.initial_time
-            st.session_state.pause = False
             st.session_state.countdown_display = ''
             st.warning("Please set the time again.")
             break
         
-        if st.session_state.pause:
-            st.session_state.countdown_display = 'Countdown Paused'
-            while st.session_state.pause:
-                time.sleep(0.1)
-            st.session_state.start_time = time.time() - (st.session_state.initial_time - st.session_state.remaining_time)
-        else:
-            elapsed_time = time.time() - st.session_state.start_time
-            st.session_state.remaining_time = max(st.session_state.initial_time - int(elapsed_time), 0)
-            mins, secs = divmod(st.session_state.remaining_time, 60)
-            timer = '{:02d}:{:02d}'.format(mins, secs)
-            st.session_state.countdown_display = timer
-            st.session_state.countdown_placeholder.text(timer)
-            time.sleep(1)
+        elapsed_time = time.time() - st.session_state.start_time
+        st.session_state.remaining_time = max(st.session_state.initial_time - int(elapsed_time), 0)
+        mins, secs = divmod(st.session_state.remaining_time, 60)
+        timer = '{:02d}:{:02d}'.format(mins, secs)
+        st.session_state.countdown_display = timer
+        st.session_state.countdown_placeholder.text(timer)
+        time.sleep(1)
     
     if st.session_state.remaining_time <= 0:
         st.session_state.countdown_placeholder.text('Time is Over!')
@@ -46,15 +38,13 @@ def main():
 
     st.markdown("""
     This app helps you set a countdown timer for your tasks. 
-    You can start, pause, stop, or restart the countdown. 
+    You can start, stop, or restart the countdown. 
     When the countdown reaches zero, a notification will pop up.
     """, unsafe_allow_html=True)
 
     # Initialize session state variables
     if 'stop' not in st.session_state:
         st.session_state.stop = False
-    if 'pause' not in st.session_state:
-        st.session_state.pause = False
     if 'restart' not in st.session_state:
         st.session_state.restart = False
     if 'timer_running' not in st.session_state:
@@ -76,12 +66,11 @@ def main():
     t = st.number_input("Enter the time in seconds:", min_value=0, step=1, value=10)
 
     # Buttons for timer control
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("Start Countdown"):
             if not st.session_state.timer_running:
                 st.session_state.stop = False
-                st.session_state.pause = False
                 st.session_state.restart = False
                 st.session_state.timer_running = True
                 st.session_state.initial_time = t
@@ -90,14 +79,10 @@ def main():
                 countdown()
     
     with col2:
-        if st.button("Pause Countdown"):
-            st.session_state.pause = not st.session_state.pause
-    
-    with col3:
         if st.button("Stop Countdown"):
             st.session_state.stop = True
     
-    with col4:
+    with col3:
         if st.button("Restart Countdown"):
             st.session_state.restart = True
 
