@@ -13,10 +13,9 @@ def countdown():
         
         if st.session_state.restart:
             st.session_state.restart = False
-            st.session_state.remaining_time = st.session_state.initial_time
+            st.session_state.remaining_time = 0
             st.session_state.pause = False
-            st.session_state.countdown_display = ''
-            st.warning("Please set the time again.")
+            st.session_state.countdown_display = 'Please set the time again.'
             break
         
         if st.session_state.pause:
