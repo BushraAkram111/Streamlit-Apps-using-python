@@ -1,6 +1,14 @@
 import streamlit as st
 import time
 
+# Function to reset the session state
+def reset_state():
+    st.session_state.stop = False
+    st.session_state.pause = False
+    st.session_state.restart = False
+    st.session_state.timer_running = False
+    st.session_state.countdown_display = ''
+
 # Define the countdown function
 def countdown(t):
     start_time = time.time()
@@ -59,15 +67,7 @@ def main():
 
     # Initialize session state variables
     if 'stop' not in st.session_state:
-        st.session_state.stop = False
-    if 'pause' not in st.session_state:
-        st.session_state.pause = False
-    if 'restart' not in st.session_state:
-        st.session_state.restart = False
-    if 'timer_running' not in st.session_state:
-        st.session_state.timer_running = False
-    if 'countdown_display' not in st.session_state:
-        st.session_state.countdown_display = ''
+        reset_state()
 
     t = st.number_input("Enter the time in seconds:", min_value=0, step=1, value=10)
 
@@ -91,7 +91,8 @@ def main():
     
     with col4:
         if st.button("Restart Countdown"):
-            st.session_state.restart = True
+            reset_state()
+            st.experimental_rerun()  # Force a rerun of the app
 
     # Display the countdown timer
     st.markdown(f'<h1 style="text-align: center; color: #61dafb;">{st.session_state.countdown_display}</h1>', unsafe_allow_html=True)
