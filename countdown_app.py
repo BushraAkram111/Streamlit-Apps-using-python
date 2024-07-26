@@ -23,6 +23,7 @@ def countdown(t):
             st.session_state.timer_running = False  # Ensure timer is stopped
             st.session_state.countdown_display = ''  # Clear the countdown display
             notification_placeholder.text('Set Your Time')  # Prompt to set time again
+            st.experimental_rerun()  # Force a rerun of the app
             return  # Exit the countdown function to restart the process
         
         if st.session_state.pause:
