@@ -20,11 +20,10 @@ def countdown(t):
         
         if st.session_state.restart:
             st.session_state.restart = False  # Reset the restart flag
-            start_time = time.time()
-            remaining_time = t
+            st.session_state.timer_running = False  # Ensure timer is stopped
             st.session_state.countdown_display = ''  # Clear the countdown display
-            notification_placeholder.text('')  # Clear the notification text
-            continue
+            notification_placeholder.text('Set Your Time')  # Prompt to set time again
+            return  # Exit the countdown function to restart the process
         
         if st.session_state.pause:
             st.session_state.countdown_display = 'Countdown Paused'
